@@ -1,0 +1,9 @@
+# cron scheduler for the observatory probe (one host = one vantage).
+# Install with:  crontab -e   and paste one line below (edit the path + VANTAGE).
+# 5-minute interval = the ceiling. This is monitoring, not load testing.
+#
+# Every 5 minutes, probe once, append JSON-lines to samples/, log to probe.log:
+*/5 * * * * cd /path/to/basedagents-observatory && VANTAGE=my-host /usr/bin/python3 probe.py >> probe.log 2>&1
+#
+# Example second vantage on another machine (give it a different, honest label):
+# */5 * * * * cd /path/to/basedagents-observatory && VANTAGE=home-nyc /usr/bin/python3 probe.py >> probe.log 2>&1

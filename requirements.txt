@@ -1,0 +1,8 @@
+# The kit itself needs NOTHING beyond the Python 3.9+ standard library.
+# probe.py and analyzer.py use only stdlib (urllib, json, datetime, ...),
+# so data collection works on a bare GitHub Actions runner with no pip install.
+#
+# Optional, for running the test suite with the pytest runner:
+pytest>=7.0 ; python_version >= "3.9"
+# (You can also run the tests with no dependencies at all:
+#    python3 tests/test_analyzer.py )

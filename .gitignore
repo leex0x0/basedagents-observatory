@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+# transient local pilot logs (the committed samples/ and pilot_proof/ are kept)
+probe.log
+pilot_run.log
+pilot_stdout.log
+.venv/
+venv/

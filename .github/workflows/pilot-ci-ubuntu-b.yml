@@ -1,0 +1,51 @@
+name: pilot-ci-ubuntu-b
+
+# Independent vantage B for the uptime pilot.
+# HONEST LABEL: this runs on a GitHub-hosted `ubuntu-latest` Actions runner
+# (Microsoft Azure infrastructure). It is NOT a separate physical machine I own;
+# it is a CI runner, scheduled independently from vantage A
+# (pilot-ci-ubuntu-a.yml). Two independently-scheduled runners = two collection
+# points for vantage agreement. GitHub's minimum schedule granularity is 5
+# minutes and scheduled runs are best-effort (delays/drops appear as collection
+# gaps, NOT target downtime).
+
+on:
+  schedule:
+    - cron: "2-59/5 * * * *"   # every 5 minutes, offset by 2 min from vantage A
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pilot-ci-ubuntu-b   # prevent this workflow from overlapping itself
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    env:
+      VANTAGE: ci-ubuntu-b
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Probe once (read-only, 4 GET requests)
+        run: python3 probe.py
+      - name: Commit sample
+        run: |
+          git config user.name  "basedagents-observatory-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add samples/*.jsonl || true
+          if git diff --cached --quiet; then
+            echo "no new samples to commit"; exit 0
+          fi
+          git commit -m "pilot: ci-ubuntu-b sample $(date -u +%FT%TZ)"
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin "${GITHUB_REF_NAME}" && git push; then
+              echo "pushed"; exit 0
+            fi
+            echo "push retry $i"; sleep 5
+          done
+          echo "could not push after retries" >&2; exit 1

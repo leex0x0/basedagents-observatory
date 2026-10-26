@@ -1,0 +1,52 @@
+name: pilot-ci-ubuntu-a
+
+# Independent vantage A for the uptime pilot.
+# HONEST LABEL: this runs on a GitHub-hosted `ubuntu-latest` Actions runner
+# (Microsoft Azure infrastructure). It is NOT a separate physical machine I own;
+# it is a CI runner. Vantage B (pilot-ci-ubuntu-b.yml) is the same kind of
+# runner on a separate scheduled workflow, giving two independent collection
+# points. GitHub's minimum schedule granularity is 5 minutes, and scheduled
+# runs are best-effort: they can be delayed or dropped under load, which simply
+# shows up as collection gaps (NOT target downtime) in the data.
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # every 5 minutes (GitHub minimum; respects the 5-min ceiling)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pilot-ci-ubuntu-a   # prevent this workflow from overlapping itself
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    env:
+      VANTAGE: ci-ubuntu-a
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Probe once (read-only, 4 GET requests)
+        run: python3 probe.py
+      - name: Commit sample
+        run: |
+          git config user.name  "basedagents-observatory-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add samples/*.jsonl || true
+          if git diff --cached --quiet; then
+            echo "no new samples to commit"; exit 0
+          fi
+          git commit -m "pilot: ci-ubuntu-a sample $(date -u +%FT%TZ)"
+          # Both vantage workflows push to the same branch; rebase+retry avoids races.
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin "${GITHUB_REF_NAME}" && git push; then
+              echo "pushed"; exit 0
+            fi
+            echo "push retry $i"; sleep 5
+          done
+          echo "could not push after retries" >&2; exit 1
