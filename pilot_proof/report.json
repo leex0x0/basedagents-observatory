@@ -1,0 +1,75 @@
+{
+  "generated_at": "2026-10-26T19:24:42.720263Z",
+  "window": {
+    "start_ts": "2026-10-26T18:53:33.948379+00:00",
+    "end_ts": "2026-10-26T19:24:10.758374+00:00"
+  },
+  "vantages": [
+    "sandbox-proof"
+  ],
+  "total_requests": 28,
+  "total_observations": 28,
+  "total_collection_gaps": 0,
+  "per_endpoint": [
+    {
+      "endpoint": "settled",
+      "url": "https://api.basedagents.ai/v1/tasks/settled",
+      "availability_pct": 100.0,
+      "probe_uptime_pct": 100.0,
+      "p50_ms": 1120.97,
+      "p95_ms": 1224.5,
+      "sample_count": 7,
+      "healthy_count": 7,
+      "collection_gap_count": 0,
+      "vantages": [
+        "sandbox-proof"
+      ],
+      "incidents": []
+    },
+    {
+      "endpoint": "status",
+      "url": "https://api.basedagents.ai/v1/status",
+      "availability_pct": 100.0,
+      "probe_uptime_pct": 100.0,
+      "p50_ms": 1577.84,
+      "p95_ms": 1701.03,
+      "sample_count": 7,
+      "healthy_count": 7,
+      "collection_gap_count": 0,
+      "vantages": [
+        "sandbox-proof"
+      ],
+      "incidents": []
+    },
+    {
+      "endpoint": "task_detail",
+      "url": "https://api.basedagents.ai/v1/tasks/task_LHJPMel3PnqH4aqCwza2c",
+      "availability_pct": 100.0,
+      "probe_uptime_pct": 100.0,
+      "p50_ms": 1131.7,
+      "p95_ms": 1186.1,
+      "sample_count": 7,
+      "healthy_count": 7,
+      "collection_gap_count": 0,
+      "vantages": [
+        "sandbox-proof"
+      ],
+      "incidents": []
+    },
+    {
+      "endpoint": "tasks",
+      "url": "https://api.basedagents.ai/v1/tasks",
+      "availability_pct": 100.0,
+      "probe_uptime_pct": 100.0,
+      "p50_ms": 1372.89,
+      "p95_ms": 1492.22,
+      "sample_count": 7,
+      "healthy_count": 7,
+      "collection_gap_count": 0,
+      "vantages": [
+        "sandbox-proof"
+      ],
+      "incidents": []
+    }
+  ]
+}
